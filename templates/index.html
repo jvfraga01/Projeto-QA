@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Folha de Pagamento</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+        .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .campo { margin-bottom: 10px; }
+        label { display: inline-block; width: 150px; }
+        input, select, button { padding: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .oculto { display: none; }
+        .resumo { font-size: 1.2em; font-weight: bold; margin-top: 10px; color: green; }
+    </style>
+</head>
+<body>
+
+    <h1>Gestão de Folha de Pagamento</h1>
+
+    <!-- Formulário de Cadastro (UC01) -->
+    <div class="card">
+        <h3>Cadastrar Colaborador</h3>
+        <form id="formCadastro">
+            <div class="campo">
+                <label>Nome:</label>
+                <input type="text" id="nome" required>
+            </div>
+            <div class="campo">
+                <label>Salário Base (R$):</label>
+                <!-- Evita valores negativos via HTML (RN003) -->
+                <input type="number" id="salario_base" step="0.01" min="0" required>
+            </div>
+            <div class="campo">
+                <label>Tipo:</label>
+                <select id="tipo_colaborador" onchange="mudarCamposExtras()">
+                    <option value="Padrão">Padrão</option>
+                    <option value="Comissionado">Comissionado</option>
+                    <option value="Producao">Por Produção</option>
+                </select>
+            </div>
+
+            <!-- Campos Extras Comissionado -->
+            <div id="campos_comissionado" class="oculto">
+                <div class="campo">
+                    <label>Valor das Vendas (R$):</label>
+                    <input type="number" id="valor_vendas" step="0.01" min="0">
+                </div>
+                <div class="campo">
+                    <label>Comissão (%):</label>
+                    <input type="number" id="percentual_comissao" step="0.01" min="0">
+                </div>
+            </div>
+
+            <!-- Campos Extras Produção -->
+            <div id="campos_producao" class="oculto">
+                <div class="campo">
+                    <label>Qtd. Produzida:</label>
+                    <input type="number" id="quantidade_produzida" min="0">
+                </div>
+                <div class="campo">
+                    <label>Valor por Unidade (R$):</label>
+                    <input type="number" id="valor_unidade" step="0.01" min="0">
+                </div>
+            </div>
+
+            <button type="button" onclick="salvarColaborador()">Salvar Cadastro</button>
+        </form>
+    </div>
+
+    <!-- Tabela da Folha de Pagamento -->
+    <div class="card">
+        <h3>Relatório de Folha de Pagamento</h3>
+        <button onclick="carregarFolha()">Gerar Folha</button>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Matrícula</th>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Salário Base</th>
+                    <th>Adicionais</th>
+                    <th>Salário Final</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-folha"></tbody>
+        </table>
+        
+        <div class="resumo" id="resumo-total"></div>
+    </div>
+
+    <script>
+        // Lógica para mostrar/esconder campos baseados no tipo selecionado
+        function mudarCamposExtras() {
+            const tipo = document.getElementById('tipo_colaborador').value;
+            document.getElementById('campos_comissionado').style.display = (tipo === 'Comissionado') ? 'block' : 'none';
+            document.getElementById('campos_producao').style.display = (tipo === 'Producao') ? 'block' : 'none';
+        }
+
+        // Função para enviar os dados para o Python
+        function salvarColaborador() {
+            const dados = {
+                nome: document.getElementById('nome').value,
+                salario_base: parseFloat(document.getElementById('salario_base').value),
+                tipo_colaborador: document.getElementById('tipo_colaborador').value,
+                
+                valor_vendas: parseFloat(document.getElementById('valor_vendas').value || 0),
+                percentual_comissao: parseFloat(document.getElementById('percentual_comissao').value || 0),
+                
+                quantidade_produzida: parseInt(document.getElementById('quantidade_produzida').value || 0),
+                valor_unidade: parseFloat(document.getElementById('valor_unidade').value || 0)
+            };
+
+            fetch('/api/colaboradores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            })
+            .then(resposta => resposta.json())
+            .then(retorno => {
+                if(retorno.erro) {
+                    alert('Erro: ' + retorno.erro);
+                } else {
+                    alert('Sucesso: ' + retorno.mensagem);
+                    document.getElementById('formCadastro').reset();
+                    mudarCamposExtras();
+                    carregarFolha(); // Atualiza a tabela abaixo automaticamente
+                }
+            });
+        }
+
+        // Função para buscar a folha calculada no Python
+        function carregarFolha() {
+            fetch('/api/folha')
+                .then(resposta => resposta.json())
+                .then(dados => {
+                    const tbody = document.getElementById('tabela-folha');
+                    tbody.innerHTML = '';
+                    
+                    dados.detalhes.forEach(colab => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${colab.matricula}</td>
+                            <td>${colab.nome}</td>
+                            <td>${colab.tipo}</td>
+                            <td>R$ ${colab.salario_base.toFixed(2)}</td>
+                            <td>R$ ${colab.adicionais.toFixed(2)}</td>
+                            <td><strong>R$ ${colab.salario_final.toFixed(2)}</strong></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    // Exibe o resumo total da folha (RF008)
+                    document.getElementById('resumo-total').innerText = 
+                        `Custo Total da Folha: R$ ${dados.total_folha.toFixed(2)}`;
+                });
+        }
+
+        // Carrega a folha assim que abrir a página
+        window.onload = carregarFolha;
+    </script>
+</body>
+</html>

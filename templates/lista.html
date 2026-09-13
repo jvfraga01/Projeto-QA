@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Consultar Colaboradores</h2>
+
+<!-- Filtro Dinâmico (RF005) -->
+<input type="text" id="buscaNome" placeholder="Digite o nome para filtrar..." oninput="filtrarTabela()" style="width: 100%; max-width: 400px; margin-bottom: 15px;">
+
+<table>
+    <thead>
+        <tr>
+            <th>Matrícula</th>
+            <th>Nome</th>
+            <th>Salário Base</th>
+            <th>Tipo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody id="tabela-colaboradores">
+        <!-- Preenchido via JavaScript -->
+    </tbody>
+</table>
+
+<script>
+    // Carrega a lista ao abrir a página
+    window.onload = function() {
+        fetch('/api/colaboradores')
+            .then(res => res.json())
+            .then(dados => {
+                const tbody = document.getElementById('tabela-colaboradores');
+                tbody.innerHTML = '';
+                
+                dados.forEach(colab => {
+                    const tr = document.createElement('tr');
+                    // O HTML da linha atualizado foi posicionado corretamente dentro do forEach
+                    tr.innerHTML = `
+                        <td>${colab.matricula}</td>
+                        <td class="nome-colab">${colab.nome}</td>
+                        <td>R$ ${colab.salario_base.toFixed(2)}</td>
+                        <td>${colab.tipo_colaborador}</td>
+                        <td>
+                            <button onclick="verFolhaIndividual(${colab.matricula})">Ver Folha</button>
+                            <button style="background-color: #f39c12; color: white;" onclick="editarColaborador(${colab.matricula})">Alterar</button>
+                            <button class="btn-danger" onclick="excluirColaborador(${colab.matricula})">Excluir</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+    };
+
+    // Filtro Dinâmico sem botão de pesquisar
+    function filtrarTabela() {
+        const termo = document.getElementById('buscaNome').value.toLowerCase();
+        const linhas = document.querySelectorAll('#tabela-colaboradores tr');
+        
+        linhas.forEach(linha => {
+            const nome = linha.querySelector('.nome-colab').textContent.toLowerCase();
+            if (nome.includes(termo)) {
+                linha.style.display = '';
+            } else {
+                linha.style.display = 'none';
+            }
+        });
+    }
+
+    // Exclusão (RF009)
+    function excluirColaborador(matricula) {
+        if(confirm('Tem certeza que deseja excluir este colaborador?')) {
+            fetch(`/api/colaboradores/${matricula}`, { method: 'DELETE' })
+                .then(() => window.location.reload());
+        }
+    }
+
+    function verFolhaIndividual(matricula) {
+        window.location.href = `/folha/${matricula}`;
+    }
+
+    // Nova função de edição adicionada no escopo correto
+    function editarColaborador(matricula) {
+        window.location.href = `/alterar/${matricula}`;
+    }
+</script>
+{% endblock %}

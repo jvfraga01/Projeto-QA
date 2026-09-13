@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .recibo-box { 
+        border: 2px solid var(--border-color); 
+        background: var(--container-bg); 
+        color: var(--text-color); 
+        padding: 20px; 
+        border-radius: 8px; 
+        margin-top: 20px; 
+    }
+    .linha-recibo { 
+        display: flex; 
+        justify-content: space-between; 
+        border-bottom: 1px solid var(--border-color); 
+        padding: 10px 0; 
+        color: var(--text-color);
+    }
+    .total-destaque { 
+        font-size: 1.3em; 
+        font-weight: bold; 
+        background: var(--alert-bg); 
+        border: 1px solid var(--alert-border); 
+        color: var(--text-color);
+        padding: 10px; 
+        margin-top: 15px; 
+        border-radius: 4px; 
+    }
+
+    /* Configuração de Impressão Limpa (Força papel branco com tinta preta) */
+    @media print {
+        .navbar, .btn-imprimir, button { display: none !important; }
+        .container { box-shadow: none !important; margin: 0 !important; padding: 0 !important; background: #ffffff !important; color: #000000 !important; width: 100% !important; max-width: 100% !important; }
+        body { background: #ffffff !important; color: #000000 !important; }
+        .recibo-box { background: #ffffff !important; color: #000000 !important; border: 2px solid #000000 !important; }
+        .linha-recibo { border-bottom: 1px solid #cccccc !important; color: #000000 !important; }
+        .total-destaque { background: #f2f2f2 !important; color: #000000 !important; border: 1px solid #000000 !important; }
+    }
+</style>
+
+<h2>Folha de Pagamento Individual</h2>
+<button class="btn-imprimir" onclick="window.print()" style="margin-bottom: 15px; background: #27ae60; color: white;">Imprimir Recibo</button>
+
+<div class="recibo-box" id="recibo">
+    Carregando recibo...
+</div>
+
+<script>
+    window.onload = function() {
+        const matricula = parseInt("{{ matricula }}");
+        fetch(`/api/folha/${matricula}`)
+            .then(res => res.json())
+            .then(dados => {
+                if(dados.erro) {
+                    document.getElementById('recibo').innerHTML = `<p>${dados.erro}</p>`;
+                    return;
+                }
+                
+                let html = `
+                    <h3 style="text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-top: 0;">RECIBO DE PAGAMENTO</h3>
+                    <div class="linha-recibo"><span><strong>Matrícula:</strong> ${dados.matricula}</span> <span><strong>Tipo:</strong> ${dados.tipo}</span></div>
+                    <div class="linha-recibo"><span><strong>Nome:</strong> ${dados.nome}</span></div>
+                    
+                    <div class="linha-recibo" style="margin-top: 15px;">
+                        <span>Salário Base</span>
+                        <span>R$ ${dados.salario_base.toFixed(2)}</span>
+                    </div>
+                `;
+
+                if(dados.tipo !== 'Padrão') {
+                    html += `
+                        <div class="linha-recibo">
+                            <span>Adicionais <br><small style="opacity: 0.8;">(${dados.detalhes_calculo})</small></span>
+                            <span>R$ ${dados.adicionais.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="linha-recibo total-destaque">
+                        <span>LÍQUIDO A RECEBER</span>
+                        <span>R$ ${dados.salario_final.toFixed(2)}</span>
+                    </div>
+                `;
+
+                document.getElementById('recibo').innerHTML = html;
+            });
+    };
+</script>
+{% endblock %}

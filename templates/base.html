@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Folha de Pagamento</title>
+    <style>
+        :root {
+    --bg-color: #f4f7f6;
+    --container-bg: #ffffff;
+    --text-color: #333333;
+    --nav-bg: #2c3e50;
+    --table-th-bg: #ecf0f1;
+    --border-color: #ddd;
+    --alert-bg: #fff3cd;
+    --alert-border: #ffeeba;
+    --alert-text: #856404;
+    }
+
+    [data-theme="dark"] {
+        --bg-color: #1a1a1a;
+        --container-bg: #2d2d2d;
+        --text-color: #f4f7f6;
+        --nav-bg: #111111;
+        --table-th-bg: #3c3c3c;
+        --border-color: #444444;
+        --alert-bg: #3a320c;
+        --alert-border: #594c0f;
+        --alert-text: #ffdf7e;
+    }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .navbar { 
+            background-color: var(--nav-bg); 
+            padding: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .navbar a { color: white; text-decoration: none; font-weight: bold; padding: 5px 10px; border-radius: 4px; }
+        .navbar a:hover { background-color: rgba(255,255,255,0.1); }
+
+        .container { 
+            max-width: 1000px; 
+            margin: 30px auto; 
+            background: var(--container-bg); 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            transition: background 0.3s;
+        }
+
+        h2 { color: var(--text-color); border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        input, select, button { padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px; background: var(--container-bg); color: var(--text-color); box-sizing: border-box; }
+        button { background-color: #3498db; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #2980b9; }
+        .btn-danger { background-color: #e74c3c; }
+        .btn-danger:hover { background-color: #c0392b; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: left; }
+        th { background-color: var(--table-th-bg); }
+
+        /* Força a impressão a manter as cores e fundos da página (ignora ocultar estilos) */
+        @media print {
+            .navbar, .btn-imprimir, button { display: none !important; }
+            .container { box-shadow: none; margin: 0; padding: 0; background: white !important; color: black !important; width: 100%; max-width: 100%; }
+            body { background: white !important; color: black !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="navbar">
+        <div class="nav-links">
+            <a href="/">Consultar Colaboradores</a>
+            <a href="/cadastro">Novo Cadastro</a>
+            <a href="/relatorios">Relatórios da Folha</a>
+        </div>
+        <!-- Botão de Alternar Tema no Canto Direito -->
+        <div>
+            <button onclick="alternarTema()" id="btnTema" style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                🌙 Modo Escuro
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <button onclick="voltarParaOrigem()" style="background-color: #7f8c8d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 15px; font-weight: bold;">
+            &larr; Voltar
+        </button>
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        function voltarParaOrigem() {
+            if (document.referrer && document.referrer.includes(window.location.hostname)) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+        // Lógica do Modo Escuro / Claro com salvamento de preferência
+        function alternarTema() {
+            const body = document.body;
+            const btn = document.getElementById('btnTema');
+            
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '☀️ Modo Claro';
+                localStorage.setItem('tema', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                btn.innerHTML = '🌙 Modo Escuro';
+                localStorage.setItem('tema', 'light');
+            }
+        }
+
+        // Restaura o tema salvo ao carregar qualquer página
+        window.addEventListener('DOMContentLoaded', () => {
+            const temaSalvo = localStorage.getItem('tema') || 'light';
+            document.body.setAttribute('data-theme', temaSalvo);
+            const btn = document.getElementById('btnTema');
+            if (temaSalvo === 'dark') {
+                btn.innerHTML = '☀️ Modo Claro';
+            } else {
+                btn.innerHTML = '🌙 Modo Escuro';
+            }
+        });
+    </script>
+</body>
+</html>
