@@ -1,5 +1,5 @@
 # 1. Documento de Visão
-
+|---|---|---|
 ## Identificação
 | Campo                 | Informação                                                        |
 | Projeto               | Sistema de Folha de Pagamento                                     |
@@ -41,10 +41,10 @@ e histórico preservado.
 
 ## Stakeholders
 | Stakeholder | Papel | Interesse |
-
-| Cliente / responsável pelo projeto    | Define regras de negócio e homologa | Sistema aderente aos requisitos |
+|---|---|---|
+| Cliente / responsável pelo projeto | Define regras de negócio e homologa | Sistema aderente aos requisitos |
 | Administrador/RH (nível 1) | Usuário  | Cadastrar, lançar, gerar e fechar a folha |
-| Financeiro (nível 2)                  | Usuário | Consultar folhas e relatórios, conhecer o custo total |
-| Colaborador (nível 3)                 | Usuário | Consultar o próprio recibo e metas |
+| Financeiro (nível 2) | Usuário | Consultar folhas e relatórios, conhecer o custo total |
+| Colaborador (nível 3) | Usuário | Consultar o próprio recibo e metas |
 | Equipe de desenvolvimento e qualidade | Equipe  | Entregar com qualidade e evidências |
-| Professor da unidade curricular       | Avaliador | Verificar a aplicação das práticas de GQS |
+| Professor da unidade curricular | Avaliador | Verificar a aplicação das práticas de GQS |
