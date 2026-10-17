@@ -2,7 +2,7 @@
 
 ## Identificação
 | Campo                 | Informação   
-|---|---||
+|---|---|
 | Projeto               | Sistema de Folha de Pagamento                                     |
 | Equipe                | João Vitor Fraga, Pedro Kolling, Yuri Soares e Luiggi Bortolini   |
 | Data                  | 17/10/2026                                                        |
