@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Minhas folhas</h2>
+<table>
+  <thead><tr><th>Mês</th><th>Tipo</th><th>Meta</th><th>Vendas / Produção</th><th>Salário base</th><th>Adicionais</th><th>Total</th><th></th></tr></thead>
+  <tbody>
+  {% for f in linhas %}
+    <tr>
+      <td>{{ f.mes|mes_nome }}/{{ f.ano }}</td><td>{{ f.tipo|tipo_nome }}</td><td>{{ f|meta_fmt }}</td>
+      <td>{% if f.tipo == 'COMISSIONADO' %}{{ f.vendas_centavos|brl }}{% elif f.tipo == 'PRODUCAO' %}{{ f.quantidade_produzida }} un{% else %}—{% endif %}</td>
+      <td>{{ f.salario_base_centavos|brl }}</td><td>{{ f.adicionais_centavos|brl }}</td>
+      <td><strong>{{ f.total_centavos|brl }}</strong></td>
+      <td><a href="{{ url_for('folha.recibo', folha_id=f.id) }}">Recibo</a></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="8">Nenhuma folha fechada ainda.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
