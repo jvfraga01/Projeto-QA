@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Folha de pagamento — {{ f.mes|mes_nome }}/{{ f.ano }}</h2>
+<button type="button" data-print>Imprimir recibo</button>
+<div class="card recibo">
+  {% if f.status_periodo != 'FECHADO' %}<div class="alerta erro">PRÉVIA — mês ainda aberto, valores podem mudar.</div>{% endif %}
+  <h3>RECIBO DE PAGAMENTO</h3>
+  <div class="linha"><span><strong>Matrícula:</strong> {{ f.matricula }}</span><span><strong>Tipo:</strong> {{ f.tipo|tipo_nome }}</span></div>
+  <div class="linha"><span><strong>Nome:</strong> {{ f.nome }}</span></div>
+  <div class="linha"><span>Salário base</span><span>{{ f.salario_base_centavos|brl }}</span></div>
+  {% if f.tipo != 'PADRAO' %}
+  <div class="linha"><span>Meta do mês</span><span>{{ f|meta_fmt }} — {{ 'atingida' if f.meta_atingida else 'não atingida' }}</span></div>
+  {% if f.tipo == 'COMISSIONADO' %}
+  <div class="linha"><span>Vendas no mês</span><span>{{ f.vendas_centavos|brl }}</span></div>
+  <div class="linha"><span>Comissão (percentual aplicado: {{ f.percentual_aplicado_bp|pct }})</span><span>{{ f.adicionais_centavos|brl }}</span></div>
+  {% else %}
+  <div class="linha"><span>Produção no mês</span><span>{{ f.quantidade_produzida }} un × {{ f.valor_unidade_centavos|brl }}</span></div>
+  <div class="linha"><span>Produtividade (bônus aplicado: {{ f.percentual_aplicado_bp|pct }})</span><span>{{ f.adicionais_centavos|brl }}</span></div>
+  {% endif %}
+  {% endif %}
+  <div class="linha total"><span>LÍQUIDO A RECEBER</span><span>{{ f.total_centavos|brl }}</span></div>
+</div>
+{% endblock %}
