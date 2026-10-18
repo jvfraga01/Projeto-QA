@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Relatório da folha</h2>
+{% if periodo %}
+  {% include "_seletor_periodo.html" %}
+  <button type="button" data-print>Imprimir relatório</button>
+  {% if periodo.status != 'FECHADO' %}<div class="alerta erro">Mês ainda aberto: valores são uma prévia.</div>{% endif %}
+  <div class="cards">
+    <div class="card"><strong>Total da folha</strong><br><span class="destaque">{{ total|brl }}</span></div>
+    <div class="card"><strong>Colaboradores</strong><br><span class="destaque">{{ linhas|length }}</span></div>
+  </div>
+  <h3>Total pago por categoria</h3>
+  <table><thead><tr><th>Categoria</th><th>Qtd.</th><th>Total</th></tr></thead><tbody>
+    {% for r in resumo %}<tr><td>{{ r.tipo|tipo_nome }}</td><td>{{ r.qtd }}</td><td>{{ r.total|brl }}</td></tr>{% endfor %}
+  </tbody></table>
+  <h3>Detalhamento</h3>
+  <table><thead><tr><th>Matrícula</th><th>Nome</th><th>Tipo</th><th>Salário base</th><th>Adicionais</th><th>Salário final</th></tr></thead><tbody>
+    {% for f in linhas %}<tr><td>{{ f.matricula }}</td><td>{{ f.nome }}</td><td>{{ f.tipo|tipo_nome }}</td><td>{{ f.salario_base_centavos|brl }}</td><td>{{ f.adicionais_centavos|brl }}</td><td><strong>{{ f.total_centavos|brl }}</strong></td></tr>{% endfor %}
+  </tbody></table>
+{% else %}<p>Nenhuma folha gerada ainda.</p>{% endif %}
+{% endblock %}
