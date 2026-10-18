@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<div class="card estreito">
+  <h2>Alterar minha senha</h2>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Senha atual <input type="password" name="atual" required></label>
+    <label>Nova senha (mín. 6 caracteres) <input type="password" name="nova" required></label>
+    <label>Confirmar nova senha <input type="password" name="confirma" required></label>
+    <button type="submit">Salvar</button>
+  </form>
+</div>
+{% endblock %}
