@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Lançamentos de {{ periodo.mes|mes_nome }}/{{ periodo.ano }}</h2>
+{% if periodo.status == 'FECHADO' %}<div class="alerta erro">Mês fechado: somente leitura.</div>{% endif %}
+<p class="dica">Ao salvar, a folha aberta também passa a usar o salário e os percentuais atuais do cadastro. A meta do mês não muda.</p>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <table>
+    <thead><tr><th>Matrícula</th><th>Nome</th><th>Tipo</th><th>Meta</th><th>Vendas (R$) / Produção (un)</th></tr></thead>
+    <tbody>
+    {% for f in linhas %}
+      <tr><td>{{ f.matricula }}</td><td>{{ f.nome }}</td><td>{{ f.tipo|tipo_nome }}</td><td>{{ f|meta_fmt }}</td>
+        <td>
+          {% if f.tipo == 'COMISSIONADO' %}<input name="vendas_{{ f.id }}" value="{{ (f.vendas_centavos // 100) }},{{ '%02d' % (f.vendas_centavos % 100) }}" {{ 'disabled' if periodo.status == 'FECHADO' }}>
+          {% elif f.tipo == 'PRODUCAO' %}<input name="qtd_{{ f.id }}" value="{{ f.quantidade_produzida }}" {{ 'disabled' if periodo.status == 'FECHADO' }}>
+          {% else %}—{% endif %}
+        </td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if periodo.status == 'ABERTO' %}<button type="submit">Salvar e recalcular</button>{% endif %}
+  <a href="{{ url_for('folha.lista', periodo=periodo.id) }}">Voltar</a>
+</form>
+{% endblock %}
