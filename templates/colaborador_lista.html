@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Colaboradores</h2>
+<form method="get" class="filtros">
+  <input name="nome" placeholder="Nome..." value="{{ filtro.nome }}">
+  <input name="salario_max" placeholder="Salário máximo (ex.: 3000,00)" value="{{ filtro.salario_max }}">
+  <select name="tipo">
+    <option value="">Todos os tipos</option>
+    {% for codigo, nome in TIPOS.items() %}<option value="{{ codigo }}" {{ 'selected' if filtro.tipo == codigo }}>{{ nome }}</option>{% endfor %}
+  </select>
+  <select name="status">
+    {% for s in ('Ativo', 'Inativo', 'Todos') %}<option value="{{ s }}" {{ 'selected' if filtro.status == s }}>{{ s }}</option>{% endfor %}
+  </select>
+  <button type="submit">Filtrar</button>
+</form>
+<table>
+  <thead><tr><th>Matrícula</th><th>Nome</th><th>Tipo</th><th>Salário base</th><th>Status</th>{% if pode('colaborador.editar') %}<th>Ações</th>{% endif %}</tr></thead>
+  <tbody>
+  {% for c in linhas %}
+    <tr>
+      <td>{{ c.matricula }}</td><td>{{ c.nome }}</td><td>{{ c.tipo|tipo_nome }}</td>
+      <td>{{ c.salario_base_centavos|brl }}</td>
+      <td>{% if c.status == 'Inativo' %}<span class="inativo">Inativo</span>{% else %}Ativo{% endif %}</td>
+      {% if pode('colaborador.editar') %}
+      <td class="acoes">
+        <a class="botao" href="{{ url_for('colaboradores.editar', matricula=c.matricula) }}">Alterar</a>
+        <form method="post" class="inline" action="{{ url_for('colaboradores.redefinir_senha', matricula=c.matricula) }}" data-confirm="Redefinir a senha para a data de nascimento?">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="secundario">Redefinir senha</button></form>
+        {% if c.status == 'Ativo' %}
+        <form method="post" class="inline" action="{{ url_for('colaboradores.desabilitar', matricula=c.matricula) }}" data-confirm="Desabilitar este colaborador? O histórico será preservado.">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="perigo">Desabilitar</button></form>
+        {% else %}
+        <form method="post" class="inline" action="{{ url_for('colaboradores.reativar', matricula=c.matricula) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>Reativar</button></form>
+        {% endif %}
+      </td>
+      {% endif %}
+    </tr>
+  {% else %}
+    <tr><td colspan="6">Nenhum colaborador encontrado.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
