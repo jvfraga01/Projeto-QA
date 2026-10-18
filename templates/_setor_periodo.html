@@ -1,0 +1,8 @@
+<form method="get" class="filtros">
+  <label>Mês da folha
+    <select name="periodo" data-auto-submit>
+      {% for p in periodos %}<option value="{{ p.id }}" {{ 'selected' if periodo and periodo.id == p.id }}>{{ p.mes|mes_nome }}/{{ p.ano }} — {{ p.status|lower }}</option>{% endfor %}
+    </select>
+  </label>
+  <button type="submit">Abrir</button>
+</form>
