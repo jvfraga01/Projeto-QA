@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% macro erro(campo) %}{% if erros.get(campo) %}<small class="erro-campo">{{ erros[campo] }}</small>{% endif %}{% endmacro %}
+{% block conteudo %}
+<h2>{{ 'Alterar colaborador ' ~ matricula if editar else 'Novo colaborador' }}</h2>
+<form method="post" class="card estreito" data-form-colaborador>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Nome <input name="nome" value="{{ v.get('nome', '') }}" required>{{ erro('nome') }}</label>
+  <label>Data de nascimento <input type="date" name="data_nascimento" value="{{ v.get('data_nascimento', '') }}" required>{{ erro('data_nascimento') }}</label>
+  <label>Início do contrato <input type="date" name="data_inicio_contrato" value="{{ v.get('data_inicio_contrato', '') }}" required>{{ erro('data_inicio_contrato') }}</label>
+  <label>Fim do contrato (vazio = ativo) <input type="date" name="data_fim_contrato" value="{{ v.get('data_fim_contrato', '') or '' }}">{{ erro('data_fim_contrato') }}</label>
+  <label>Nível de acesso
+    <select name="nivel_acesso">
+      <option value="3" {{ 'selected' if v.get('nivel_acesso') == '3' }}>3 — Comum</option>
+      <option value="2" {{ 'selected' if v.get('nivel_acesso') == '2' }}>2 — Financeiro</option>
+      <option value="1" {{ 'selected' if v.get('nivel_acesso') == '1' }}>1 — Admin/RH</option>
+    </select>{{ erro('nivel_acesso') }}</label>
+  <label>Salário base (R$) <input name="salario_base" value="{{ v.get('salario_base', '') }}" placeholder="3000,00" required>{{ erro('salario_base') }}</label>
+  <label>Tipo de colaborador
+    <select name="tipo" id="tipo">
+      {% for codigo, nome in TIPOS.items() %}<option value="{{ codigo }}" {{ 'selected' if v.get('tipo') == codigo }}>{{ nome }}</option>{% endfor %}
+    </select>{{ erro('tipo') }}</label>
+  <div class="extra" data-tipo="COMISSIONADO">
+    <label>Comissão base (%) <input name="percentual_comissao" value="{{ v.get('percentual_comissao', '') }}" placeholder="3,00">{{ erro('percentual_comissao') }}</label>
+  </div>
+  <div class="extra" data-tipo="PRODUCAO">
+    <label>Valor por unidade (R$) <input name="valor_unidade" value="{{ v.get('valor_unidade', '') }}" placeholder="2,50">{{ erro('valor_unidade') }}</label>
+  </div>
+  {% if not editar %}<p class="dica">A senha inicial será a data de nascimento no formato DDMMAAAA.</p>{% endif %}
+  <button type="submit">{{ 'Salvar alterações' if editar else 'Confirmar cadastro' }}</button>
+  <a href="{{ url_for('colaboradores.lista') }}">Cancelar</a>
+</form>
+{% endblock %}
