@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Meus dados</h2>
+<div class="card estreito">
+  <p><strong>Matrícula:</strong> {{ c.matricula }}</p>
+  <p><strong>Nome:</strong> {{ c.nome }}</p>
+  <p><strong>Nascimento:</strong> {{ c.data_nascimento|data_br }}</p>
+  <p><strong>Cadastro:</strong> {{ c.data_cadastro|data_br }}</p>
+  <p><strong>Contrato:</strong> {{ c.data_inicio_contrato|data_br }} até {{ c.data_fim_contrato|data_br if c.data_fim_contrato else 'em vigor' }}</p>
+  <p><strong>Nível de acesso:</strong> {{ c.nivel_acesso|nivel_nome }}</p>
+  <p><strong>Tipo:</strong> {{ c.tipo|tipo_nome }}</p>
+  <p><strong>Salário base:</strong> {{ c.salario_base_centavos|brl }}</p>
+  {% if c.tipo == 'COMISSIONADO' %}<p><strong>Comissão base:</strong> {{ c.percentual_comissao_bp|pct }}</p>{% endif %}
+  {% if c.tipo == 'PRODUCAO' %}<p><strong>Valor por unidade:</strong> {{ c.valor_unidade_centavos|brl }}</p>{% endif %}
+  <p><a href="{{ url_for('folha.minha_folha') }}">Ver minhas folhas</a></p>
+</div>
+{% endblock %}
