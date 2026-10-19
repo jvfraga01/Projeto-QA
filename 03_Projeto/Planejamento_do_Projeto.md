@@ -61,10 +61,10 @@ Preencher com os nomes da equipe (ajustar o número de papéis ao tamanho do gru
 
 | Papel | Responsável | Atividades |
 |---|---|---|
-| Gerente do projeto / Analista de requisitos | [nome] | Cronograma, ERS, rastreabilidade, ata de revisão |
-| Arquiteto / Desenvolvedor | [nome] | Arquitetura, implementação, manual técnico |
-| Analista de testes (QA) | [nome] | Plano de testes, casos de teste, execução, registro de defeitos, métricas |
-| Documentação / Homologação | [nome] | Manual do usuário, termo de homologação, apresentação |
+| Gerente do projeto / Analista de requisitos | [Yuri Soares] | Cronograma, ERS, rastreabilidade, ata de revisão |
+| Arquiteto / Desenvolvedor | [João Vitor Fraga] | Arquitetura, implementação, manual técnico |
+| Analista de testes (QA) | [Luiggi Bortolini] | Plano de testes, casos de teste, execução, registro de defeitos, métricas |
+| Documentação / Homologação | [Pedro Kolling] | Manual do usuário, termo de homologação, apresentação |
 
 ## Riscos
 | Risco | Probabilidade | Ação |
