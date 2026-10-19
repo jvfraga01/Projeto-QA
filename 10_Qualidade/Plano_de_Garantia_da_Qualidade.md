@@ -11,16 +11,14 @@
 
 ## Controle de Versão
 - Git, repositório único com a estrutura de entrega (`Projeto_FolhaPagamento/`).
-- Ramo `main` sempre funcional; trabalho em ramos `feature/<assunto>` e `fix/<assunto>`.
-- Mensagens de commit no formato `tipo: descrição` (`feat`, `fix`, `docs`, `test`, `refactor`), por exemplo `feat: gerar folha mensal`.
-- Integração por *pull request* revisado por outro integrante; testes devem passar antes do *merge*.
-- Marcos com *tags*: `v0.1-A1` (entrega A1) e `v1.0-A3` (entrega final).
+- Ramo `main` sempre funcional; trabalho em ramos 
+- Marcos com *tags*: `v1.2-A1` (entrega A1) e `v-A3` (entrega final).
 - Não versionar: `__pycache__/`, `instance/` (banco e chave secreta), `.venv/`, `.coverage`.
 
 ## Revisões Técnicas
 | Item | Descrição |
 |---|---|
-| Quando | Antes de cada *merge* em `main` e uma revisão formal por entrega (A1 e A3) |
+| Quando | Antes de cada *commit* em `main` e uma revisão formal por entrega (A1 e A3) |
 | Quem | Autor + 1 revisor (outro integrante) |
 | Registro | Ata de Revisão Técnica (data, participantes, itens, ações) |
 | Checklist | Atende ao requisito? Segue o padrão de código? Valida entradas? Checa permissão no backend? Tem teste? Documentação atualizada? Sem dados sensíveis no código? |
