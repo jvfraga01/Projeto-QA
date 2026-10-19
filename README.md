@@ -3,7 +3,7 @@
 Sistema de Folha de Pagamento desenvolvido para o Trabalho Integrador (A1 e A3) da unidade curricular
 **Garantia da Qualidade de Software**.
 
-**Equipe:** João Vitor Fraga, Pedro Kolling, Yuri Soares e Luiggi Bortolini · **Versão:** 0.1 (A1) · **Linguagem:** Python 3 + Flask + SQLite
+**Equipe:** João Vitor Fraga, Pedro Kolling, Yuri Soares e Luiggi Bortolini · **Versão:** 1.2 (A1) · **Linguagem:** Python 3 + Flask + SQLite
 
 ## Como usar (resumo)
 1. Instale o Python 3.10+ (ou deixe o `iniciar.bat` oferecer a instalação).
