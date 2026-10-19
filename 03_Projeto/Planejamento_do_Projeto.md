@@ -13,7 +13,7 @@ flowchart TD
     G --> G1["Planejamento e cronograma"]
     G --> G2["Reuniões e controle de versão"]
     A --> A1["Visão e ERS"]
-    A --> A1["Casos de uso e UML"]
+    A --> A2["Casos de uso e UML"]
     A --> A3["Arquitetura e modelo de dados"]
     D --> D1["Autenticação e permissões"]
     D --> D2["Cadastro de colaboradores"]
